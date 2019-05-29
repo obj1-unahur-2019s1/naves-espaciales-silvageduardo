@@ -17,14 +17,19 @@ class NaveEspacial {
 	method cargarCombustible(cuanto){ combustible += cuanto}
 	method descargarCombustible(cuanto){ combustible -= cuanto}
 	
-	
+	method estaTranquila()= combustible >= 4000 and velocidad <= 12000
 	
 }
 
 class NavesBaliza inherits NaveEspacial{
 	const colores = ["verde","rojo","azul"]
+	var colorBaliza 
 	
-	method cambiarColorDeBaliza(colorNuevo) = colores.find({ color => color == colorNuevo})
+	method cambiarColorDeBaliza(colorNuevo) { 
+		colorBaliza = colores.find({ color => color == colorNuevo})
+		return colorBaliza
+		}
+	
 	
 	method prepararViaje(){
 		self.cambiarColorDeBaliza("verde")
@@ -40,6 +45,7 @@ class NavesBaliza inherits NaveEspacial{
 		self.escapar()
 		return self.avisar()
 	}
+	override method estaTranquila() = super() and colorBaliza !="rojo"
 }
 
 class NavesDePasajeros inherits NaveEspacial{
@@ -109,4 +115,32 @@ class NavesDeCombate inherits NaveEspacial{
 		self.avisar()
 	}
 	
+	override method estaTranquila()= super() and not misilesDesplegados
+	
+}
+
+class NaveHospital inherits NavesDePasajeros{
+		
+	var property quirofanoDisponible = false
+	
+	method quirofanoPreparado(){ quirofanoDisponible = true }
+	method quirofanoNoPreparado(){ quirofanoDisponible = false }
+		
+	override method recibirAmenaza(){
+		super()
+		self.quirofanoPreparado()
+	}
+	
+	override method estaTranquila()= super() and not quirofanoDisponible
+}
+
+class NaveDeCombateSigilosa inherits NavesDeCombate{
+	
+	
+	override method escapar(){
+		super()
+		self.replegarMisiles()
+		self.ponerseInvisible()
+	}
+	override method estaTranquila()= super() and estaVisible
 }
