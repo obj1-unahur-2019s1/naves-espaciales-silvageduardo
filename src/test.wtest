@@ -77,3 +77,46 @@ test "Nave De CombateSigilosa"{
 	assert.that(naveDeCombateSigilosa.misilesDesplegados())
 	assert.notThat(naveDeCombateSigilosa.estaVisible())
 }
+
+/*// esta clase está completa, no necesita nada más
+class ProfesionalAsociado {
+	var property universidad
+	
+	method provinciasDondePuedeTrabajar() { return #{"Entre Ríos", "Corrientes", "Santa Fe"} }
+	
+	method honorariosPorHora() { return 3000 }
+}
+
+
+// a esta clase le faltan métodos
+class ProfesionalVinculado {
+	var property universidad
+	
+	method honorariosPorHora() { return universidad.honorariosPorHora() }
+	
+}
+
+
+// a esta clase le faltan atributos y métodos
+class ProfesionalLibre {
+	var property universidad
+	
+}
+
+class Universidad {
+	
+}
+
+class EmpresaDeServicios{
+	var property profesionales =[]
+	var property honorarioDeReferencia
+	
+	method cuantosProfesionalesEstudiaron(universidad){
+		return profesionales.count({ prof => prof.universidad()==universidad})
+	}
+	method esDeGenteAcotada(){
+		return not profesionales.any({ prof => prof.provinciasDondePuedeTrabajar().size()>3})
+	}
+}
+ * 
+ */
