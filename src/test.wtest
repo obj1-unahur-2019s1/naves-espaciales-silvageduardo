@@ -1,0 +1,79 @@
+import naves.*
+
+test "test de naves baliza" {
+	var navesBaliza = new NavesBaliza()
+	
+	navesBaliza.cambiarColorDeBaliza("azul")
+	assert.equals("azul",navesBaliza.colorBaliza())
+	navesBaliza.prepararViaje()
+	assert.equals("verde",navesBaliza.colorBaliza())
+	assert.equals(30000,navesBaliza.cantidadCombustible())
+	assert.equals(5000,navesBaliza.mostrarVelocidad())
+	assert.that(navesBaliza.estaTranquila())
+	navesBaliza.recibirAmenaza()
+	assert.equals("rojo",navesBaliza.colorBaliza())
+	assert.notThat(navesBaliza.estaTranquila())
+}
+
+test "nave pasajero"{
+	var navesDePasajeros = new NavesDePasajeros(pasajeros = 10, 
+		racionesComida=10,racionesBebida=10	)
+	navesDePasajeros.prepararViaje()
+	assert.equals(50,navesDePasajeros.racionesComida())
+	assert.equals(70,navesDePasajeros.racionesBebida())
+	assert.equals(30000,navesDePasajeros.cantidadCombustible())
+	assert.equals(5000,navesDePasajeros.mostrarVelocidad())
+	assert.that(navesDePasajeros.estaTranquila())
+	navesDePasajeros.recibirAmenaza()
+	assert.equals(10000,navesDePasajeros.mostrarVelocidad())
+	assert.equals(40,navesDePasajeros.racionesComida())
+	assert.equals(50,navesDePasajeros.racionesBebida())
+}
+
+test "naves de combate"{
+	
+	var navesDeCombate = new NavesDeCombate()
+	
+	navesDeCombate.emitirMensaje("hola")
+	assert.that(navesDeCombate.esEscueta())
+	navesDeCombate.emitirMensaje("este mensaje tiene 30 caracteres")
+	assert.notThat(navesDeCombate.esEscueta())
+	navesDeCombate.prepararViaje()
+	assert.that(navesDeCombate.estaVisible())
+	assert.notThat(navesDeCombate.misilesDesplegados())
+	navesDeCombate.emitirMensaje("Saliendo en misión")
+	assert.equals(30000,navesDeCombate.cantidadCombustible())
+	assert.equals(20000,navesDeCombate.mostrarVelocidad())
+	assert.notThat(navesDeCombate.estaTranquila())
+	navesDeCombate.recibirAmenaza()
+	assert.that(navesDeCombate.emitioMensaje("Amenaza recibida"))	
+}
+
+test "naves hospital"{
+	var naveHospital = new NaveHospital(velocidad=12000,combustible=5000)
+
+	assert.that(naveHospital.estaTranquila())
+	naveHospital.recibirAmenaza()
+	assert.that(naveHospital.quirofanoDisponible())
+	assert.notThat(naveHospital.estaTranquila())
+}
+
+test "Nave De CombateSigilosa"{
+	var naveDeCombateSigilosa = new NaveDeCombateSigilosa()
+	
+	naveDeCombateSigilosa.emitirMensaje("hola")
+	assert.that(naveDeCombateSigilosa.esEscueta())
+	naveDeCombateSigilosa.emitirMensaje("este mensaje tiene 30 caracteres")
+	assert.notThat(naveDeCombateSigilosa.esEscueta())
+	naveDeCombateSigilosa.prepararViaje()
+	assert.that(naveDeCombateSigilosa.estaVisible())
+	assert.notThat(naveDeCombateSigilosa.misilesDesplegados())
+	naveDeCombateSigilosa.emitirMensaje("Saliendo en misión")
+	assert.equals(30000,naveDeCombateSigilosa.cantidadCombustible())
+	assert.equals(20000,naveDeCombateSigilosa.mostrarVelocidad())
+	assert.notThat(naveDeCombateSigilosa.estaTranquila())
+	naveDeCombateSigilosa.recibirAmenaza()
+	assert.that(naveDeCombateSigilosa.emitioMensaje("Amenaza recibida"))
+	assert.that(naveDeCombateSigilosa.misilesDesplegados())
+	assert.notThat(naveDeCombateSigilosa.estaVisible())
+}

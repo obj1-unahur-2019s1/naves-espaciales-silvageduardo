@@ -6,6 +6,7 @@ class NaveEspacial {
 	method velocidad(cuanto) { velocidad = cuanto }
 	method acelerar(cuanto) { velocidad = (velocidad + cuanto).min(100000) }
 	method desacelerar(cuanto) { velocidad = (velocidad - cuanto).max(0) }
+	method mostrarVelocidad()=return velocidad
 	
 	method irHaciaElSol() { direccion = 10 }
 	method escaparDelSol() { direccion = -10 }
@@ -16,6 +17,19 @@ class NaveEspacial {
 	
 	method cargarCombustible(cuanto){ combustible += cuanto}
 	method descargarCombustible(cuanto){ combustible -= cuanto}
+	method cantidadCombustible()=return combustible
+	
+	method prepararViaje(){
+		self.cargarCombustible(30000)
+		self.acelerar(5000)
+	}
+	method escapar()
+	method avisar()
+	method recibirAmenaza(){
+		self.escapar()
+		self.avisar()
+	}
+	
 	
 	method estaTranquila()= combustible >= 4000 and velocidad <= 12000
 	
@@ -23,27 +37,22 @@ class NaveEspacial {
 
 class NavesBaliza inherits NaveEspacial{
 	const colores = ["verde","rojo","azul"]
-	var colorBaliza 
+	var property colorBaliza 
 	
 	method cambiarColorDeBaliza(colorNuevo) { 
 		colorBaliza = colores.find({ color => color == colorNuevo})
-		return colorBaliza
 		}
 	
 	
-	method prepararViaje(){
+	override method prepararViaje(){
+		super()
 		self.cambiarColorDeBaliza("verde")
 		self.ponerseParaleloAlSol()
-		self.cargarCombustible(30000)
-		self.acelerar(5000)
 	}
 	
-	method escapar(){self.irHaciaElSol()}
-	method avisar() = self.cambiarColorDeBaliza("rojo")
-	
-	method recibirAmenaza(){
-		self.escapar()
-		return self.avisar()
+	override method escapar(){self.irHaciaElSol()}
+	override method avisar() { self.cambiarColorDeBaliza("rojo")
+		return colorBaliza
 	}
 	override method estaTranquila() = super() and colorBaliza !="rojo"
 }
@@ -53,23 +62,24 @@ class NavesDePasajeros inherits NaveEspacial{
 	var property racionesComida = 0
 	var property racionesBebida = 0
 	
-	method prepararViaje(){
+	method cargarRacionesDeComida(cuanto){racionesComida+=cuanto }
+	method descargarRacionesDeComida(cuanto){racionesComida-=cuanto }
+	method cargarRacionesDeBebida(cuanto){racionesBebida+=cuanto }
+	method descargarRacionesDeBebida(cuanto){racionesBebida-=cuanto }
+	
+	override method prepararViaje(){
+		super()
 		racionesComida += pasajeros * 4 
 		racionesBebida += pasajeros * 6
 		self.acercarseUnPocoAlSol()
-		self.cargarCombustible(30000)
-		self.acelerar(5000)
+
 	}
-	method escapar(){velocidad*=2}
-	method avisar(){
-		racionesComida -= 1
-		racionesBebida -= 2
-	}
-	
-	method recibirAmenaza(){
-		self.escapar()
-		self.avisar()
-	}
+	override method escapar(){self.acelerar(velocidad)}
+	override method avisar(){
+		self.descargarRacionesDeComida( pasajeros )
+		self.descargarRacionesDeBebida( pasajeros )
+		self.descargarRacionesDeBebida( pasajeros )
+		}
 	
 }
 
@@ -91,32 +101,23 @@ class NavesDeCombate inherits NaveEspacial{
 	method primerMensajeEmitido() = mensajes.first()
 	method ultimoMensajeEmitido() = mensajes.last()
 	method esEscueta() = not mensajes.any({ mensaje => mensaje.size()>30})
-	method emitioMensaje(mensaje) = self.mensajesEmitidos().any({m => m.find(mensaje) })
+	method emitioMensaje(mensaje) = self.mensajesEmitidos().contains(mensaje)
 	
-	method prepararViaje(){
+	override method prepararViaje(){
+		super()
 		self.ponerseVisible()
 		self.replegarMisiles()
 		self.acelerar(15000)
 		self.emitirMensaje("Saliendo en misión")
-		self.cargarCombustible(30000)
-		self.acelerar(5000)
-		self.acelerar(15000)
 	}
-	method escapar(){
+	override method escapar(){
 		self.acercarseUnPocoAlSol()
 		self.acercarseUnPocoAlSol()
 	}
-	method avisar(){
+	override method avisar(){
 		self.emitirMensaje("Amenaza recibida")
 	}
-	
-	method recibirAmenaza(){
-		self.escapar()
-		self.avisar()
-	}
-	
 	override method estaTranquila()= super() and not misilesDesplegados
-	
 }
 
 class NaveHospital inherits NavesDePasajeros{
@@ -139,7 +140,7 @@ class NaveDeCombateSigilosa inherits NavesDeCombate{
 	
 	override method escapar(){
 		super()
-		self.replegarMisiles()
+		self.desplegarMisiles()
 		self.ponerseInvisible()
 	}
 	override method estaTranquila()= super() and estaVisible
